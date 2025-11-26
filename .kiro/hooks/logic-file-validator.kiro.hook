@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Logic File Validator",
+  "description": "When files in src/lib or src/utils are saved, this hook checks for corresponding .test.ts files (creating Vitest scaffolds if missing), verifies no external API calls (OpenAI/Fetch) were added to maintain pure TypeScript, and runs existing tests to validate regex parsing logic.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/lib/**/*.ts",
+      "src/utils/**/*.ts",
+      "lib/**/*.ts",
+      "store/**/*.ts",
+      "utils/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file in the logic directory was saved. Please perform these three validation steps:\n\n1. **Check for Tests**: Look for a corresponding .test.ts file next to the edited file. If it does not exist, create a Vitest test scaffold that:\n   - Imports the functions from the source file\n   - Creates describe blocks for each exported function\n   - Includes placeholder test cases for edge cases (empty strings, special regex characters like ^ $ \\)\n\n2. **Verify Determinism**: Analyze the edited file's code to ensure it remains pure TypeScript with NO external API calls. Flag any of the following as violations:\n   - fetch() calls\n   - OpenAI, Anthropic, or other LLM SDK imports\n   - Any HTTP client libraries (axios, got, etc.)\n   - Non-deterministic functions (Math.random, Date.now without mocking)\n   Report any violations found.\n\n3. **Run Validation**: If a .test.ts file exists for this module, run `npm test [filename]` and report the results, specifically noting if regex parsing logic passes edge case tests."
+  },
+  "workspaceFolderName": "regx",
+  "shortName": "logic-file-validator"
+}
