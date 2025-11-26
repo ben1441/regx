@@ -51,69 +51,108 @@
     - **Property 8: Invalid regex graceful handling**
     - **Validates: Requirements 4.1, 4.2, 4.4**
 
-- [ ] 5. Checkpoint - Ensure all core logic tests pass
+- [x] 5. Checkpoint - Ensure all core logic tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement Zustand Store
-  - [ ] 6.1 Create regex store
+- [x] 6. Implement Zustand Store
+  - [x] 6.1 Create regex store
     - Implement `useRegexStore` in `store/regex-store.ts`
     - State: blocks, compiledRegex, testText, explainerInput
     - Actions: addBlock, removeBlock, updateBlock, setTestText, setExplainerInput
     - Auto-compile regex when blocks change
     - _Requirements: 1.2, 1.3, 1.4_
-  - [ ] 6.2 Write property tests for store operations
+  - [x] 6.2 Write property tests for store operations
     - **Property 9: Block list addition**
     - **Property 10: Block list deletion**
     - **Validates: Requirements 1.2, 1.3**
 
-- [ ] 7. Build UI Components - Block Sidebar
-  - [ ] 7.1 Create BlockSidebar component
+- [x] 7. Build UI Components - Block Sidebar
+  - [x] 7.1 Create BlockSidebar component
     - Implement `components/block-sidebar.tsx` as client component
     - Display available block types with icons (lucide-react)
     - Add click handler to call store's addBlock action
     - Style with dark theme (Slate/Zinc 900)
     - _Requirements: 1.1, 5.1, 6.1_
 
-- [ ] 8. Build UI Components - Regex Strip
-  - [ ] 8.1 Create BlockCard component
+- [x] 8. Build UI Components - Regex Strip
+  - [x] 8.1 Create BlockCard component
     - Implement `components/block-card.tsx` as client component
     - Render block with type label and delete button
     - Show input field for Text and Digit blocks
     - _Requirements: 1.5, 1.6_
-  - [ ] 8.2 Create RegexStrip component
+  - [x] 8.2 Create RegexStrip component
     - Implement `components/regex-strip.tsx` as client component
     - Use auto-animate for smooth block transitions
     - Render BlockCard for each block in store
     - _Requirements: 1.2, 1.3, 6.2_
 
-- [ ] 9. Build UI Components - Preview and Playground
-  - [ ] 9.1 Create RegexPreview component
+- [x] 9. Build UI Components - Preview and Playground
+  - [x] 9.1 Create RegexPreview component
     - Implement `components/regex-preview.tsx` as client component
     - Display compiled regex from store
     - Add copy-to-clipboard button
     - _Requirements: 1.4_
-  - [ ] 9.2 Create Playground component
+  - [x] 9.2 Create Playground component
     - Implement `components/playground.tsx` as client component
     - Text input for test string
     - Highlight matches using matcher results
     - Show error state for invalid patterns
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 5.3_
 
-- [ ] 10. Build UI Components - Explainer
-  - [ ] 10.1 Create Explainer component
+- [x] 10. Build UI Components - Explainer
+  - [x] 10.1 Create Explainer component
     - Implement `components/explainer.tsx` as client component
     - Input field for pasting regex
     - Render token cards with descriptions
     - Show reconstructed regex from pretty-printer
     - _Requirements: 3.1, 3.13, 3.15_
 
-- [ ] 11. Assemble Main Application Layout
-  - [ ] 11.1 Update app layout and page
+- [x] 11. Assemble Main Application Layout
+  - [x] 11.1 Update app layout and page
     - Update `app/layout.tsx` with dark theme globals
     - Update `app/globals.css` with Slate/Zinc color scheme
     - Implement `app/page.tsx` with CSS Grid layout
     - Arrange: Sidebar (left), RegexStrip + Preview (center), Playground + Explainer (bottom/right)
     - _Requirements: 5.1, 5.2, 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 12. Final Checkpoint - Ensure all tests pass
+- [x] 12. Final Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 13. Enhanced Block Types for Complex Regex
+  - [x] 13.1 Add advanced block types to types.ts
+    - CHAR_CLASS: Custom character class [a-zA-Z0-9...] with quantifier
+    - ONE_OR_MORE: + quantifier block
+    - ZERO_OR_MORE: * quantifier block
+    - WORD: \w word character with quantifier
+    - ANY_CHAR: . any character with quantifier
+    - GROUP: (?:...) non-capturing group with quantifier
+    - Support range quantifiers {n,m} and {n,}
+  - [x] 13.2 Update compiler to handle new block types
+    - Add buildQuantifier helper for quantifier string generation
+    - Compile CHAR_CLASS to [value] with quantifier
+    - Compile WORD to \w with quantifier
+    - Compile ANY_CHAR to . with quantifier
+    - Compile GROUP to (?:content) with quantifier
+  - [x] 13.3 Update store to create new block types
+    - Add createBlock cases for all new block types
+    - Add updateBlock cases for all new block types
+  - [x] 13.4 Update BlockSidebar with new block options
+    - Organize blocks by category: Anchors, Matchers, Quantifiers
+    - Add icons for new block types
+  - [x] 13.5 Update BlockCard to render new block types
+    - Add input fields for CHAR_CLASS with quantifier dropdown
+    - Add quantifier dropdown for WORD and ANY_CHAR
+    - Add GROUP input with content and quantifier
+    - Support range inputs for {n,m} quantifiers
+
+- [x] 14. Enhanced Tokenizer for Complex Regex
+  - [x] 14.1 Update tokenizer to parse complex character classes
+    - Parse arbitrary [content] character classes
+    - Generate human-readable descriptions for character classes
+  - [x] 14.2 Add range quantifier support
+    - Parse {n,} and {n,m} quantifiers
+    - Update Quantifier type with min/max fields
+  - [x] 14.3 Add additional pattern support
+    - Parse \w, \W, \D, \S escape sequences
+    - Parse . any character
+    - Parse groups (...) with descriptions

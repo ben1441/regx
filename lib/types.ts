@@ -8,7 +8,19 @@
 // ============================================================================
 
 /** Supported block types in the visual builder */
-export type BlockType = 'START' | 'END' | 'TEXT' | 'DIGIT' | 'WHITESPACE' | 'OPTIONAL';
+export type BlockType =
+  | 'START'
+  | 'END'
+  | 'TEXT'
+  | 'DIGIT'
+  | 'WHITESPACE'
+  | 'OPTIONAL'
+  | 'CHAR_CLASS'
+  | 'ONE_OR_MORE'
+  | 'ZERO_OR_MORE'
+  | 'WORD'
+  | 'ANY_CHAR'
+  | 'GROUP';
 
 /** Base interface for all blocks */
 interface BaseBlock {
@@ -49,8 +61,62 @@ export interface OptionalBlock extends BaseBlock {
   content: string;
 }
 
+/** Character class block [chars] with optional quantifier */
+export interface CharClassBlock extends BaseBlock {
+  type: 'CHAR_CLASS';
+  value: string; // e.g., "a-zA-Z0-9._%+-"
+  quantifier: 'one' | 'oneOrMore' | 'zeroOrMore' | 'optional' | 'range';
+  min?: number;
+  max?: number;
+}
+
+/** One or more quantifier block (+) */
+export interface OneOrMoreBlock extends BaseBlock {
+  type: 'ONE_OR_MORE';
+  content: string;
+}
+
+/** Zero or more quantifier block (*) */
+export interface ZeroOrMoreBlock extends BaseBlock {
+  type: 'ZERO_OR_MORE';
+  content: string;
+}
+
+/** Word character block (\w) */
+export interface WordBlock extends BaseBlock {
+  type: 'WORD';
+  quantifier: 'one' | 'oneOrMore' | 'zeroOrMore' | 'optional';
+}
+
+/** Any character block (.) */
+export interface AnyCharBlock extends BaseBlock {
+  type: 'ANY_CHAR';
+  quantifier: 'one' | 'oneOrMore' | 'zeroOrMore' | 'optional';
+}
+
+/** Group block for grouping patterns */
+export interface GroupBlock extends BaseBlock {
+  type: 'GROUP';
+  content: string;
+  quantifier: 'one' | 'oneOrMore' | 'zeroOrMore' | 'optional' | 'range';
+  min?: number;
+  max?: number;
+}
+
 /** Union type of all block variants */
-export type Block = StartBlock | EndBlock | TextBlock | DigitBlock | WhitespaceBlock | OptionalBlock;
+export type Block =
+  | StartBlock
+  | EndBlock
+  | TextBlock
+  | DigitBlock
+  | WhitespaceBlock
+  | OptionalBlock
+  | CharClassBlock
+  | OneOrMoreBlock
+  | ZeroOrMoreBlock
+  | WordBlock
+  | AnyCharBlock
+  | GroupBlock;
 
 
 // ============================================================================
@@ -69,8 +135,10 @@ export type TokenType =
 
 /** Quantifier information attached to tokens */
 export interface Quantifier {
-  type: 'exact' | 'plus' | 'star' | 'optional';
+  type: 'exact' | 'range' | 'plus' | 'star' | 'optional';
   count?: number;
+  min?: number;
+  max?: number;
 }
 
 /** A single parsed token from a regex string */
