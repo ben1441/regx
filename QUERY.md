@@ -1,5 +1,6 @@
-<!-- Initial prompt -->
+# Initial prompt
 
+```
 # Project: RegX - Deterministic Visual Regex Builder
 
 ## Goal
@@ -44,20 +45,26 @@ Build a single-purpose "Micro-Tool" that allows users to build and understand Re
   - Sidebar: Available Blocks (Draggable or Click-to-add).
   - Main Stage: The "Regex Strip" where blocks are assembled.
   - Bottom/Side Panel: Real-time Preview & Playground.
+```
 
 
 
+# Modification Prompt
 
-<!-- Modification Query -->
-
-<!-- 1. -->
+### 1.
 it was not able to properly explain complex regex like
 
-<!-- 2. -->
+### 2.
+```
 even the builder should be able to build such complex regex
+```
 
-<!-- 3. -->
+### 3.
+```
 I think the user should be able to drag and drop the blocks however they require, like rearrangement
+```
 
-<!-- 4. -->
+### 4.
+```
 On mobile and tablet devices it must say please enable desktop mode or view in a desktop
+```
