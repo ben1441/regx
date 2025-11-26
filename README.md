@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RegX - Visual Regex Builder
+
+A deterministic visual regex builder that lets you construct and understand Regular Expressions without knowing regex syntax. Build patterns with blocks, test them in real-time, and get human-readable explanations — all with zero AI dependencies.
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+## Features
+
+- **Block-Based Builder** — Drag and stack visual blocks to create regex patterns without memorizing syntax
+- **Regex-to-English Explainer** — Paste any regex and get a human-readable breakdown of what it does
+- **Real-Time Playground** — Test patterns against sample text with instant match highlighting
+- **100% Deterministic** — Pure TypeScript logic with no external AI/LLM dependencies
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **State Management**: Zustand
+- **Styling**: Tailwind CSS (dark mode)
+- **Testing**: Vitest + fast-check (property-based testing)
+- **Animations**: @formkit/auto-animate
+- **Icons**: lucide-react
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/ben1441/regx.git
+cd regx
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to use the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run tests with Vitest |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+├── layout.tsx          # Root layout with dark theme
+├── page.tsx            # Main application page
+├── globals.css         # Tailwind base styles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+lib/
+├── compiler.ts         # Block → Regex compiler
+├── tokenizer.ts        # Regex → Token parser
+├── pretty-printer.ts   # Token → Regex reconstructor
+├── matcher.ts          # Pattern matching engine
+├── types.ts            # TypeScript interfaces
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+store/
+├── regex-store.ts      # Zustand state management
 
-## Deploy on Vercel
+components/
+├── block-sidebar.tsx   # Available blocks panel
+├── regex-strip.tsx     # Block assembly canvas
+├── block-card.tsx      # Individual block component
+├── playground.tsx      # Test area with highlighting
+├── explainer.tsx       # Regex explanation panel
+├── regex-preview.tsx   # Compiled regex display
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Supported Block Types
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Block | Output | Description |
+|-------|--------|-------------|
+| Start of Line | `^` | Matches beginning of string |
+| End of Line | `$` | Matches end of string |
+| Text | `escaped literal` | Matches exact text (special chars escaped) |
+| Digit | `\d{N}` | Matches N digits |
+| Whitespace | `\s` | Matches any whitespace |
+| Optional | `C?` | Makes content optional |
+| Word | `\w` | Matches word characters |
+| Any Char | `.` | Matches any character |
+| Character Class | `[chars]` | Matches characters in set |
+| Group | `(pattern)` | Groups patterns together |
+
+## License
+
+MIT
