@@ -156,3 +156,14 @@
     - Parse \w, \W, \D, \S escape sequences
     - Parse . any character
     - Parse groups (...) with descriptions
+
+- [x] 15. Drag-and-Drop Block Reordering
+  - [x] 15.1 Add reorderBlocks action to store
+    - Add reorderBlocks(fromIndex, toIndex) to RegexStore interface
+    - Implement reorder logic with array splice
+    - Auto-recompile regex after reordering
+  - [x] 15.2 Implement drag-and-drop in RegexStrip
+    - Add HTML5 drag-and-drop event handlers
+    - Track draggedIndex and dragOverIndex state
+    - Visual feedback with ring highlight on drop target
+    - Add GripVertical drag handle icon to each block

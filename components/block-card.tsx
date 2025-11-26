@@ -331,7 +331,7 @@ export function BlockCard({ block, onDelete, onUpdate }: BlockCardProps) {
 
   return (
     <div
-      className={`flex items-start gap-2 p-3 rounded-lg border ${display.color} 
+      className={`flex items-start gap-2 p-3 rounded-r-lg border-y border-r ${display.color} 
                   transition-all hover:brightness-110`}
       data-block-id={block.id}
     >

@@ -192,6 +192,7 @@ export interface RegexStore {
   addBlock: (type: BlockType) => void;
   removeBlock: (id: string) => void;
   updateBlock: (id: string, updates: Partial<Block>) => void;
+  reorderBlocks: (fromIndex: number, toIndex: number) => void;
   setTestText: (text: string) => void;
   setExplainerInput: (input: string) => void;
 }

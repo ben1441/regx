@@ -47,8 +47,10 @@ describe("Zustand Regex Store", () => {
   /**
    * **Feature: regx-visual-builder, Property 9: Block list addition**
    *
-   * For any block list and any valid block type, adding a block SHALL increase
-   * the list length by exactly one and the new block SHALL appear in the list.
+   * For any block list and any valid block type, adding a block SHALL:
+   * - Increase the list length by exactly one if the block is allowed
+   * - Prevent duplicate START/END blocks (no-op if already present)
+   * - Insert START at index 0, END at last index, others before END
    *
    * **Validates: Requirements 1.2**
    */
@@ -69,24 +71,45 @@ describe("Zustand Regex Store", () => {
           addBlock(type);
         }
 
-        const initialLength = useRegexStore.getState().blocks.length;
+        const blocksBefore = useRegexStore.getState().blocks;
+        const initialLength = blocksBefore.length;
+
+        // Check if this type already exists (for START/END constraint)
+        const hasStart = blocksBefore.some((b) => b.type === "START");
+        const hasEnd = blocksBefore.some((b) => b.type === "END");
+        const isDuplicateAnchor =
+          (newType === "START" && hasStart) || (newType === "END" && hasEnd);
 
         // Add the new block
         addBlock(newType);
 
         const finalState = useRegexStore.getState();
 
-        // Length should increase by exactly 1
-        expect(finalState.blocks.length).toBe(initialLength + 1);
+        if (isDuplicateAnchor) {
+          // Duplicate START/END should be rejected (no change)
+          expect(finalState.blocks.length).toBe(initialLength);
+        } else {
+          // Length should increase by exactly 1
+          expect(finalState.blocks.length).toBe(initialLength + 1);
 
-        // The new block should be the last one and have the correct type
-        const lastBlock = finalState.blocks[finalState.blocks.length - 1];
-        expect(lastBlock.type).toBe(newType);
+          // The new block should appear in the list with correct type
+          const newBlock = finalState.blocks.find(
+            (b) => !blocksBefore.some((old) => old.id === b.id)
+          );
+          expect(newBlock).toBeDefined();
+          expect(newBlock!.type).toBe(newType);
 
-        // The new block should have a valid UUID
-        expect(lastBlock.id).toBeDefined();
-        expect(typeof lastBlock.id).toBe("string");
-        expect(lastBlock.id.length).toBeGreaterThan(0);
+          // Verify anchor positioning constraints
+          const startIdx = finalState.blocks.findIndex((b) => b.type === "START");
+          const endIdx = finalState.blocks.findIndex((b) => b.type === "END");
+
+          if (startIdx !== -1) {
+            expect(startIdx).toBe(0); // START must be at index 0
+          }
+          if (endIdx !== -1) {
+            expect(endIdx).toBe(finalState.blocks.length - 1); // END must be last
+          }
+        }
       }),
       { numRuns: 100 }
     );

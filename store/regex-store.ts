@@ -23,6 +23,42 @@ import type {
 import { compileBlocksToRegex } from "../lib/compiler";
 
 /**
+ * Finds the correct insertion index for a new block, respecting anchor constraints.
+ * START blocks must be at position 0, END blocks must be at the last position.
+ * @param blocks - Current block array
+ * @param type - Type of block being added
+ * @returns The index where the new block should be inserted
+ */
+function getInsertionIndex(blocks: Block[], type: BlockType): number {
+  if (type === "START") {
+    return 0;
+  }
+  if (type === "END") {
+    return blocks.length;
+  }
+  // Insert before END block if one exists, otherwise at the end
+  const endIndex = blocks.findIndex((b) => b.type === "END");
+  return endIndex === -1 ? blocks.length : endIndex;
+}
+
+/**
+ * Validates if a reorder operation respects anchor constraints.
+ * @param blocks - Block array after the proposed move
+ * @returns true if the reorder is valid
+ */
+function isValidReorder(blocks: Block[]): boolean {
+  const startIndex = blocks.findIndex((b) => b.type === "START");
+  const endIndex = blocks.findIndex((b) => b.type === "END");
+
+  // START must be at index 0 if present
+  if (startIndex > 0) return false;
+  // END must be at last index if present
+  if (endIndex !== -1 && endIndex !== blocks.length - 1) return false;
+
+  return true;
+}
+
+/**
  * Creates a new block with a unique ID based on the block type.
  * @param type - The type of block to create
  * @returns A new block instance with default values
@@ -70,12 +106,30 @@ export const useRegexStore = create<RegexStore>((set, get) => ({
   explainerInput: "",
 
   /**
-   * Adds a new block of the specified type to the end of the block list.
-   * Automatically recompiles the regex after adding.
+   * Adds a new block of the specified type at the correct position.
+   * START blocks are inserted at index 0, END blocks at the end,
+   * other blocks are inserted before any END block.
+   * Prevents duplicate START/END blocks.
    */
   addBlock: (type: BlockType) => {
+    const currentBlocks = get().blocks;
+
+    // Prevent duplicate START or END blocks
+    if (type === "START" && currentBlocks.some((b) => b.type === "START")) {
+      return;
+    }
+    if (type === "END" && currentBlocks.some((b) => b.type === "END")) {
+      return;
+    }
+
     const newBlock = createBlock(type);
-    const newBlocks = [...get().blocks, newBlock];
+    const insertIndex = getInsertionIndex(currentBlocks, type);
+    const newBlocks = [
+      ...currentBlocks.slice(0, insertIndex),
+      newBlock,
+      ...currentBlocks.slice(insertIndex),
+    ];
+
     set({
       blocks: newBlocks,
       compiledRegex: compileBlocksToRegex(newBlocks),
@@ -160,6 +214,30 @@ export const useRegexStore = create<RegexStore>((set, get) => ({
     set({
       blocks: newBlocks,
       compiledRegex: compileBlocksToRegex(newBlocks),
+    });
+  },
+
+  /**
+   * Reorders blocks by moving a block from one index to another.
+   * Validates that START stays at index 0 and END stays at last index.
+   * Rejects invalid reorder operations silently.
+   */
+  reorderBlocks: (fromIndex: number, toIndex: number) => {
+    const blocks = [...get().blocks];
+    if (fromIndex < 0 || fromIndex >= blocks.length) return;
+    if (toIndex < 0 || toIndex >= blocks.length) return;
+
+    const [movedBlock] = blocks.splice(fromIndex, 1);
+    blocks.splice(toIndex, 0, movedBlock);
+
+    // Validate anchor constraints before applying
+    if (!isValidReorder(blocks)) {
+      return;
+    }
+
+    set({
+      blocks,
+      compiledRegex: compileBlocksToRegex(blocks),
     });
   },
 
